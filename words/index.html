@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab Master</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Main Menu -->
+        <section id="main-menu" class="screen active">
+            <button class="btn-settings" onclick="app.showSettings()"><i class="fas fa-cog"></i></button>
+            <h1 class="logo">Vocab<span class="highlight">Master</span></h1>
+            <p class="subtitle">ฝึกฝนคำศัพท์ภาษาอังกฤษของคุณ</p>
+            <div class="menu-buttons">
+                <button class="btn btn-primary btn-large" onclick="app.showLevelSelect()">Play Now <i class="fas fa-play"></i></button>
+            </div>
+            
+            <div class="stars-total">
+                <i class="fas fa-star"></i> <span id="total-stars-display">0</span>
+            </div>
+        </section>
+
+        <!-- Level Selection -->
+        <section id="level-select" class="screen">
+            <button class="btn-back" onclick="app.showMainMenu()"><i class="fas fa-arrow-left"></i></button>
+            <h2>Select Level</h2>
+            <div class="level-grid">
+                <button class="btn-level" onclick="app.selectLevel('A1')">A1 <span>Beginner</span></button>
+                <button class="btn-level" onclick="app.selectLevel('A2')">A2 <span>Elementary</span></button>
+                <button class="btn-level" onclick="app.selectLevel('B1')">B1 <span>Intermediate</span></button>
+                <button class="btn-level" onclick="app.selectLevel('B2')">B2 <span>Upper Intermediate</span></button>
+                <button class="btn-level" onclick="app.selectLevel('C1')">C1 <span>Advanced</span></button>
+                <button class="btn-level" onclick="app.selectLevel('C2')">C2 <span>Master</span></button>
+            </div>
+        </section>
+
+        <!-- Mode Selection -->
+        <section id="mode-select" class="screen">
+            <button class="btn-back" onclick="app.showLevelSelect()"><i class="fas fa-arrow-left"></i></button>
+            <h2>Select Mode</h2>
+            <p class="selected-level-display">Level: <span id="mode-level-display">A1</span></p>
+            <div class="mode-cards">
+                <div class="mode-card" onclick="app.startGame(1)">
+                    <div class="mode-icon"><i class="fas fa-sort-alpha-down"></i></div>
+                    <h3>Mode 1: Anagram</h3>
+                    <p>เรียงตัวอักษรให้เป็นคำที่ถูกต้อง</p>
+                </div>
+                <div class="mode-card" onclick="app.startGame(2)">
+                    <div class="mode-icon"><i class="fas fa-image"></i></div>
+                    <h3>Mode 2: Image Guess</h3>
+                    <p>ทายคำศัพท์จากรูปภาพ</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gameplay Screen -->
+        <section id="gameplay" class="screen">
+            <header class="game-header">
+                <div class="stat">
+                    <i class="fas fa-clock"></i> <span id="timer">00:00</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-star"></i> <span id="score">0</span> <span id="combo-display" class="combo-text hidden">x1</span>
+                </div>
+                <div class="stat">
+                    <span id="word-progress">1/20</span>
+                </div>
+                <button class="btn-quit" onclick="app.quitGame()"><i class="fas fa-times"></i></button>
+            </header>
+
+            <div class="game-container">
+                <!-- Mode 2: Image -->
+                <div id="image-container" class="hidden">
+                    <img id="word-image" src="" alt="Guess the word">
+                    <div class="image-loader"></div>
+                </div>
+
+                <!-- Mode 1 & 2: Word Area -->
+                <div id="word-area">
+                    <div class="word-slots" id="word-slots">
+                        <!-- Slots will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Translation Reveal (Mode 1 & 2 after correct) -->
+                <div id="translation-box" class="hidden">
+                    <p class="translation-text" id="translation-text">Translation</p>
+                    <button class="btn-listen" onclick="app.playPronunciation()"><i class="fas fa-volume-up"></i></button>
+                </div>
+
+                <!-- Input area -->
+                <div class="input-area">
+                    <!-- Mode 1: Scrambled Letters -->
+                    <div id="letters-pool" class="hidden">
+                        <!-- Letters will be injected here -->
+                    </div>
+
+                    <!-- Mode 2: Keyboard -->
+                    <div id="keyboard" class="hidden">
+                        <!-- Keyboard buttons -->
+                    </div>
+                </div>
+
+                <div class="game-actions">
+                    <button class="btn btn-secondary" onclick="app.useHint()"><i class="fas fa-lightbulb"></i> Hint (-5 pts)</button>
+                    <button id="btn-skip" class="btn btn-danger" onclick="app.skipWord()">Skip <i class="fas fa-forward"></i></button>
+                    <button id="btn-next" class="btn btn-primary hidden" onclick="app.nextWord()">Next <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="result" class="screen">
+            <div class="result-card">
+                <h2>Stage Cleared!</h2>
+                <div class="stars-earned" id="stars-earned">
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <div class="result-stats">
+                    <p>Score: <span id="final-score">0</span></p>
+                    <p>Time: <span id="final-time">00:00</span></p>
+                </div>
+                
+                <div id="review-list-container" class="hidden">
+                    <h3>Words to Review</h3>
+                    <ul id="review-list"></ul>
+                </div>
+                
+                <div class="result-buttons">
+                    <button class="btn btn-secondary" onclick="app.showLevelSelect()">Levels</button>
+                    <button class="btn btn-primary" onclick="app.replayGame()">Play Again</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Message</div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <div class="setting-item">
+                <span>Sound & Voice</span>
+                <button id="btn-toggle-sound" class="btn btn-secondary" onclick="app.toggleSound()"><i class="fas fa-volume-up"></i> ON</button>
+            </div>
+            <div class="setting-item">
+                <span>Reset Progress</span>
+                <button class="btn btn-danger" onclick="app.resetProgress()"><i class="fas fa-trash"></i> Reset</button>
+            </div>
+            <button class="btn btn-primary btn-close-modal" onclick="app.hideSettings()">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
