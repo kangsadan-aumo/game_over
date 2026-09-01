@@ -1,8 +1,9 @@
 :root {
-    --nokia-screen-bg: #8ba870; /* Slightly more vibrant green for Snake II feel */
-    --nokia-pixel: #202b1c; /* Very dark green/black for pixels */
-    --phone-bg: #2a303c; /* Blue-grey phone body */
-    --phone-accent: #191c24;
+    --nokia-screen-bg: #aeaf43; /* Classic Nokia olive/yellow-green */
+    --nokia-pixel: #363620; /* Dark olive pixel color */
+    --phone-bg: #dbe0e3; /* Silver/grey phone body */
+    --phone-accent: #9fa9b3;
+    --key-bg: #eef1f3;
 }
 
 body {
@@ -20,89 +21,121 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
+    padding: 20px;
 }
 
 .phone-frame {
     background-color: var(--phone-bg);
-    padding: 20px 15px 40px;
-    border-radius: 50px 50px 70px 70px;
-    box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 10px 25px rgba(0,0,0,0.9);
-    border: 2px solid #4a5468;
+    padding: 15px 10px 30px;
+    border-radius: 40px;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.8), 0 20px 40px rgba(0,0,0,0.8);
+    border: 2px solid #b3bec7;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     width: 340px;
+    background-image: linear-gradient(135deg, #eef1f3 0%, #c4cdd4 100%);
 }
 
 .phone-speaker {
-    width: 60px;
-    height: 6px;
-    background-color: #111;
-    border-radius: 3px;
-    margin-bottom: 10px;
-    box-shadow: inset 0 2px 3px rgba(0,0,0,0.8);
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    margin-top: 5px;
 }
 
-.phone-brand {
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    color: #a0aabf;
-    letter-spacing: 2px;
+.phone-speaker div {
+    width: 25px;
+    height: 4px;
+    background-color: #333;
+    border-radius: 2px;
+    box-shadow: inset 0 2px 2px rgba(0,0,0,0.8);
+}
+
+.screen-bezel {
+    background-color: #a4afb7;
+    padding: 20px 20px 35px 20px;
+    border-radius: 20px 20px 30px 30px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
     margin-bottom: 20px;
+    width: 90%;
+    box-sizing: border-box;
 }
 
 .screen-container {
     background-color: var(--nokia-screen-bg);
-    padding: 10px;
-    border-radius: 15px;
-    border: 15px solid #1a1f26;
-    border-top-width: 25px;
-    border-bottom-width: 25px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 2px solid rgba(0,0,0,0.3);
     position: relative;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-    width: 280px;
-    height: 330px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+    width: 100%;
+    height: 230px; /* Canvas (180) + HUD (40) + Padding */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-}
-
-/* Glass glare effect */
-.screen-container::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%);
-    pointer-events: none;
-    border-radius: 5px;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 10px;
-    color: var(--nokia-pixel);
-    z-index: 2;
+    overflow: hidden;
 }
 
 canvas {
     background-color: transparent;
     display: block;
-    margin: 0 auto;
     image-rendering: pixelated;
     z-index: 1;
+    margin-top: 5px;
+}
+
+/* In-Screen HUD */
+.screen-hud {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    margin-bottom: 5px;
+    z-index: 2;
+}
+
+.hud-line {
+    width: 100%;
+    height: 2px;
+    background-color: var(--nokia-pixel);
+    margin-bottom: 8px;
+}
+
+.hud-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+}
+
+#score-display {
+    font-size: 16px;
+    color: var(--nokia-pixel);
+    letter-spacing: 2px;
+}
+
+.progress-bar {
+    width: 100px;
+    height: 8px;
+    border: 2px solid var(--nokia-pixel);
+    padding: 1px;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background-color: var(--nokia-pixel);
+    /* Adding texture to the progress bar */
+    background-image: linear-gradient(90deg, transparent 50%, var(--nokia-screen-bg) 50%);
+    background-size: 4px 100%;
 }
 
 .game-over, .start-screen {
     position: absolute;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%;
-    background: var(--nokia-screen-bg);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(174, 175, 67, 0.95);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -110,62 +143,39 @@ canvas {
     color: var(--nokia-pixel);
     text-align: center;
     z-index: 10;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
-.title {
-    font-size: 24px !important;
-    margin-bottom: 20px !important;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-    transform: skew(-5deg);
-}
+.game-over h2 { font-size: 16px; margin-bottom: 20px; }
 
-.game-over h2, .start-screen h2 {
-    margin: 0 0 15px;
-    font-size: 18px;
-}
-
-.game-over p, .start-screen p {
-    margin: 0 0 20px;
+#restartBtn {
+    padding: 10px 15px;
+    font-family: 'Press Start 2P', monospace;
     font-size: 10px;
-    line-height: 1.5;
+    background: var(--nokia-pixel);
+    color: var(--nokia-screen-bg);
+    border: none;
+    cursor: pointer;
 }
 
-.blink {
-    animation: blinker 1.5s linear infinite;
-    font-size: 8px !important;
-    margin-top: 15px !important;
-}
-
-@keyframes blinker {
-    50% { opacity: 0; }
-}
-
-/* Mode Selection */
 .mode-select {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 10px;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 .mode-label {
+    font-size: 8px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    font-size: 9px;
-    cursor: pointer;
-    position: relative;
 }
 
-.mode-label input {
-    display: none; /* Hide standard radio */
-}
+.mode-label input { display: none; }
 
 .radio-custom {
-    width: 12px;
-    height: 12px;
+    width: 10px; height: 10px;
     border: 2px solid var(--nokia-pixel);
     margin-right: 8px;
     display: inline-block;
@@ -175,103 +185,143 @@ canvas {
 .mode-label input:checked + .radio-custom::after {
     content: '';
     position: absolute;
-    top: 2px; left: 2px;
-    width: 8px; height: 8px;
+    top: 2px; left: 2px; width: 6px; height: 6px;
     background-color: var(--nokia-pixel);
 }
 
-#restartBtn {
-    padding: 12px 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    background: var(--nokia-pixel);
-    color: var(--nokia-screen-bg);
-    border: none;
-    cursor: pointer;
-}
+.blink { animation: blinker 1.5s linear infinite; font-size: 8px; }
+@keyframes blinker { 50% { opacity: 0; } }
 
-#restartBtn:active {
-    transform: scale(0.95);
-}
-
-/* CONTROLS AREA */
-.controls-area {
-    margin-top: 20px;
-    width: 100%;
+/* KEYPAD AREA */
+.keypad-area {
+    width: 90%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    position: relative;
+    gap: 10px;
+    margin-top: 10px;
 }
 
-.phone-buttons {
+.top-row {
     display: flex;
     justify-content: space-between;
-    width: 80%;
-    margin-bottom: -10px;
-    z-index: 2;
-}
-
-.action-btn-left, .action-btn-right {
-    width: 50px;
-    height: 25px;
-    background: #c3cad5;
-    border-radius: 15px 15px 5px 5px;
-    box-shadow: 0 4px 0 #8993a4;
-}
-
-.d-pad {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 20px;
+    padding: 0 10px;
 }
 
-.d-pad-middle {
+.soft-key {
+    width: 60px;
+    height: 35px;
+    background: linear-gradient(180deg, #f0f3f5 0%, #d1d8de 100%);
+    border: 1px solid #aeb6be;
+    border-radius: 15px 15px 5px 5px;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2), inset 0 1px 2px #fff;
     display: flex;
-    gap: 5px;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 8px;
+    cursor: pointer;
 }
 
-.dir-btn {
-    background-color: #c3cad5;
-    color: #555;
+.soft-key:active {
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.blue-line {
+    width: 20px;
+    height: 3px;
+    background-color: #0088cc;
+    border-radius: 2px;
+}
+
+.d-pad-container {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #e4e9ed 0%, #c4ccd4 100%);
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2), inset 0 2px 4px #fff;
+    border: 1px solid #aeb6be;
+}
+
+.d-pad-btn {
+    position: absolute;
+    background: transparent;
     border: none;
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    font-size: 20px;
     cursor: pointer;
-    box-shadow: 0 5px 0 #8993a4;
-    transition: all 0.1s;
+}
+
+.d-pad-btn:active { background: rgba(0,0,0,0.05); }
+
+.d-pad-btn.up { top: 0; left: 20px; width: 40px; height: 25px; border-radius: 10px 10px 0 0; }
+.d-pad-btn.down { bottom: 0; left: 20px; width: 40px; height: 25px; border-radius: 0 0 10px 10px; }
+.d-pad-btn.left { top: 20px; left: 0; width: 25px; height: 40px; border-radius: 10px 0 0 10px; }
+.d-pad-btn.right { top: 20px; right: 0; width: 25px; height: 40px; border-radius: 0 10px 10px 0; }
+
+.d-pad-center {
+    position: absolute;
+    top: 25px; left: 25px;
+    width: 30px; height: 30px;
+    border-radius: 5px;
+    border: 1px solid #aeb6be;
+    background: #dbe0e3;
+    pointer-events: none;
+}
+
+.call-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-top: -15px;
+}
+
+.call-btn {
+    width: 45px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid #aeb6be;
+    background: linear-gradient(180deg, #f0f3f5 0%, #d1d8de 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+    font-size: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.dir-btn:active {
-    box-shadow: 0 0 0 #8993a4;
-    transform: translateY(5px);
-    background-color: #d1d8e0;
-}
-
-.center-pad {
-    width: 55px;
-    height: 55px;
-    background-color: transparent;
-}
+.green-phone { color: #28a745; text-shadow: 0 1px 0 #fff; transform: rotate(-10deg); }
+.red-phone { color: #dc3545; text-shadow: 0 1px 0 #fff; transform: rotate(135deg); }
 
 .numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px 25px;
-    margin-top: 5px;
+    gap: 8px 12px;
+    padding: 10px;
 }
 
-.numpad div {
-    width: 35px;
-    height: 18px;
-    background: #191c24;
+.num-btn {
+    height: 35px;
     border-radius: 10px;
-    box-shadow: inset 0 2px 2px rgba(255,255,255,0.1);
+    border: 1px solid #aeb6be;
+    background: linear-gradient(180deg, #f0f3f5 0%, #d1d8de 100%);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+}
+
+.num-btn:active {
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    transform: translateY(1px);
+}
+
+.num-btn .sub {
+    font-size: 9px;
+    font-weight: 400;
+    color: #666;
 }

@@ -1,48 +1,52 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const scoreElement = document.getElementById('score');
-const highScoreElement = document.getElementById('high-score');
+const scoreDisplay = document.getElementById('score-display');
+const progressFill = document.getElementById('progress-fill');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const startScreen = document.getElementById('startScreen');
-const finalScoreElement = document.getElementById('final-score');
 const restartBtn = document.getElementById('restartBtn');
-const gameHeader = document.getElementById('gameHeader');
 
-// Setup grid
-canvas.width = 260;
-canvas.height = 260;
-
-const gridSize = 13;
-const tileCountX = canvas.width / gridSize;
-const tileCountY = canvas.height / gridSize;
+// The canvas size is set in HTML to 260x180
+const gridSize = 10; // Smaller grid for a more detailed textured snake
+const tileCountX = canvas.width / gridSize; // 26
+const tileCountY = canvas.height / gridSize; // 18
 
 let snake = [];
 let food = { x: 10, y: 10 };
+let bonusFood = null;
+let foodsEaten = 0;
 let obstacles = [];
 let dx = 0;
 let dy = 0;
+let lastDx = 0;
+let lastDy = 0;
 let score = 0;
-let highScore = localStorage.getItem('nokiaSnake2HighScore') || 0;
 let gameInterval;
 let isGameOver = false;
 let isGameStarted = false;
-let currentMode = 'box'; // 'box', 'wrap', 'obstacles'
+let currentMode = 'box'; 
 
-// Speed controls
-const initialSpeed = 150;
+const initialSpeed = 120;
 const minSpeed = 50;
 let currentSpeed = initialSpeed;
 
-// Nokia Colors
-const colorPixel = '#202b1c';
-const colorBg = '#8ba870';
+const colorPixel = '#363620';
+const colorBg = '#aeaf43'; // Match CSS var --nokia-screen-bg
 
-// Initialize
-highScoreElement.textContent = highScore;
 gameOverScreen.style.display = 'none';
 
+function padScore(num) {
+    return num.toString().padStart(4, '0');
+}
+
+function updateProgress() {
+    // Fill up to max score of say 2000 for visual effect
+    const maxScore = 2000;
+    const percentage = Math.min((score / maxScore) * 100, 100);
+    progressFill.style.width = percentage + '%';
+}
+
 function initGame() {
-    // Determine mode
     const modeRadios = document.getElementsByName('gameMode');
     for (let radio of modeRadios) {
         if (radio.checked) {
@@ -51,28 +55,35 @@ function initGame() {
         }
     }
 
+    // Snake starts 3 segments long
     snake = [
-        { x: 10, y: 15 },
-        { x: 10, y: 16 },
-        { x: 10, y: 17 },
+        { x: 13, y: 9 },
+        { x: 13, y: 10 },
+        { x: 13, y: 11 },
     ];
     dx = 0;
     dy = -1; 
+    lastDx = 0;
+    lastDy = -1;
     score = 0;
     currentSpeed = initialSpeed;
-    scoreElement.textContent = score;
+    
+    scoreDisplay.textContent = padScore(score);
+    updateProgress();
+
     isGameOver = false;
     isGameStarted = true;
     
     gameOverScreen.style.display = 'none';
     startScreen.style.display = 'none';
-    gameHeader.style.display = 'flex';
     
     obstacles = [];
     if (currentMode === 'obstacles') {
         generateObstacles();
     }
     
+    foodsEaten = 0;
+    bonusFood = null;
     food = getRandomFoodPosition();
 
     if (gameInterval) clearTimeout(gameInterval);
@@ -80,7 +91,7 @@ function initGame() {
 }
 
 function generateObstacles() {
-    const numObstacles = 8;
+    const numObstacles = 10;
     for (let i = 0; i < numObstacles; i++) {
         let obs;
         let valid = false;
@@ -90,10 +101,8 @@ function generateObstacles() {
                 y: Math.floor(Math.random() * tileCountY)
             };
             
-            // Check not on snake initial spawn area
-            const isNearSpawn = Math.abs(obs.x - 10) < 4 && Math.abs(obs.y - 15) < 6;
-            
-            // Check not duplicate
+            // Check not near center
+            const isNearSpawn = Math.abs(obs.x - 13) < 4 && Math.abs(obs.y - 9) < 5;
             const isDup = obstacles.some(o => o.x === obs.x && o.y === obs.y);
 
             if (!isNearSpawn && !isDup) {
@@ -106,10 +115,8 @@ function generateObstacles() {
 
 function gameLoop() {
     if (isGameOver) return;
-    
     update();
     draw();
-    
     if (!isGameOver) {
         gameInterval = setTimeout(gameLoop, currentSpeed);
     }
@@ -118,14 +125,12 @@ function gameLoop() {
 function update() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-    // Wall logic based on mode
     if (currentMode === 'wrap') {
         if (head.x < 0) head.x = tileCountX - 1;
         else if (head.x >= tileCountX) head.x = 0;
         if (head.y < 0) head.y = tileCountY - 1;
         else if (head.y >= tileCountY) head.y = 0;
     } else {
-        // Box or Obstacles mode -> walls kill you
         if (head.x < 0 || head.x >= tileCountX || head.y < 0 || head.y >= tileCountY) {
             handleGameOver();
             return;
@@ -152,87 +157,154 @@ function update() {
 
     snake.unshift(head); 
 
+    let ateBonus = false;
+    // Bonus Food Collision (2x2 blocks)
+    if (bonusFood && 
+        head.x >= bonusFood.x && head.x <= bonusFood.x + 1 && 
+        head.y >= bonusFood.y && head.y <= bonusFood.y + 1) {
+        score += 50; // Big bonus
+        scoreDisplay.textContent = padScore(score);
+        updateProgress();
+        bonusFood = null;
+        ateBonus = true;
+    }
+
     // Food Collision
     if (head.x === food.x && head.y === food.y) {
-        score += 10;
-        scoreElement.textContent = score;
+        score += 8; // Adjust score increment to feel authentic
+        scoreDisplay.textContent = padScore(score);
+        updateProgress();
         
         if (currentSpeed > minSpeed) {
-            currentSpeed -= 3; // Get faster
+            currentSpeed -= 2;
         }
-
-        if (score > highScore) {
-            highScore = score;
-            highScoreElement.textContent = highScore;
-            localStorage.setItem('nokiaSnake2HighScore', highScore);
-        }
+        foodsEaten++;
         food = getRandomFoodPosition();
-    } else {
+
+        // Spawn bonus food every 5 normal foods
+        if (foodsEaten % 5 === 0 && !bonusFood) {
+            bonusFood = getRandomFoodPosition(true); // Pass true for bonus
+            bonusFood.timer = 60; // Bonus lasts for 60 ticks
+        }
+    } else if (!ateBonus) {
         snake.pop(); 
+    }
+
+    // Update bonus timer
+    if (bonusFood) {
+        bonusFood.timer--;
+        if (bonusFood.timer <= 0) {
+            bonusFood = null;
+        }
+    }
+
+    lastDx = dx;
+    lastDy = dy;
+}
+
+function drawTexturedBlock(x, y, type) {
+    const px = x * gridSize;
+    const py = y * gridSize;
+    ctx.fillStyle = colorPixel;
+    
+    if (type === 'bonus') {
+        // Draw a 2x2 blocks large textured round food
+        ctx.fillRect(px + 4, py + 2, 12, 16);
+        ctx.fillRect(px + 2, py + 4, 16, 12);
+        
+        ctx.clearRect(px + 6, py + 6, 4, 4);
+        ctx.clearRect(px + 10, py + 10, 4, 4);
+        ctx.clearRect(px + 10, py + 6, 4, 4);
+        ctx.clearRect(px + 6, py + 10, 4, 4); // Checker pattern inside 20x20
+    } else if (type === 'snake') {
+        // Snake body texture (checkered)
+        ctx.fillRect(px + 1, py + 1, 8, 8);
+        ctx.clearRect(px + 3, py + 3, 2, 2);
+        ctx.clearRect(px + 5, py + 5, 2, 2);
+        ctx.clearRect(px + 3, py + 7, 2, 2);
+        ctx.clearRect(px + 7, py + 3, 2, 2);
+    } else if (type === 'normal') {
+        // Normal food (small egg/dot)
+        const padding = 2;
+        ctx.fillRect(px + padding, py + padding, gridSize - padding * 2, gridSize - padding * 2);
     }
 }
 
 function draw() {
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw obstacles if mode active
     if (currentMode === 'obstacles') {
         ctx.fillStyle = colorPixel;
         obstacles.forEach(obs => {
-            // Draw a cross/block pattern for obstacles
             const px = obs.x * gridSize;
             const py = obs.y * gridSize;
             ctx.fillRect(px + 1, py + 1, gridSize - 2, gridSize - 2);
-            ctx.clearRect(px + 4, py + 4, gridSize - 8, gridSize - 8);
-            ctx.fillRect(px + 5, py + 5, gridSize - 10, gridSize - 10);
+            ctx.clearRect(px + 3, py + 3, gridSize - 6, gridSize - 6);
+            ctx.fillRect(px + 4, py + 4, gridSize - 8, gridSize - 8);
         });
     }
 
-    // Draw snake (Snake II style)
-    ctx.fillStyle = colorPixel;
+    // Draw snake with texture
     snake.forEach((part, index) => {
-        const padding = 1;
-        ctx.fillRect(part.x * gridSize + padding, part.y * gridSize + padding, gridSize - padding * 2, gridSize - padding * 2);
+        drawTexturedBlock(part.x, part.y, 'snake');
     });
 
-    // Draw food (classic egg/dot)
-    const px = food.x * gridSize;
-    const py = food.y * gridSize;
-    const padding = 2;
-    ctx.fillRect(px + padding, py + padding, gridSize - padding * 2, gridSize - padding * 2);
+    // Draw normal food
+    drawTexturedBlock(food.x, food.y, 'normal');
+
+    // Draw bonus food if active
+    if (bonusFood) {
+        // Blink when running out of time (last 15 ticks)
+        if (bonusFood.timer > 15 || bonusFood.timer % 4 < 2) {
+            drawTexturedBlock(bonusFood.x, bonusFood.y, 'bonus');
+        }
+    }
 }
 
-function getRandomFoodPosition() {
+function getRandomFoodPosition(isBonus = false) {
     let newFood;
     while (true) {
         newFood = {
-            x: Math.floor(Math.random() * tileCountX),
-            y: Math.floor(Math.random() * tileCountY)
+            x: Math.floor(Math.random() * (tileCountX - (isBonus ? 1 : 0))),
+            y: Math.floor(Math.random() * (tileCountY - (isBonus ? 1 : 0)))
         };
         
-        // Check snake
-        let isOnSnake = snake.some(p => p.x === newFood.x && p.y === newFood.y);
+        let tilesToCheck = [{x: newFood.x, y: newFood.y}];
+        if (isBonus) {
+            tilesToCheck.push({x: newFood.x + 1, y: newFood.y});
+            tilesToCheck.push({x: newFood.x, y: newFood.y + 1});
+            tilesToCheck.push({x: newFood.x + 1, y: newFood.y + 1});
+        }
         
-        // Check obstacles
+        let isOnSnake = false;
         let isOnObstacle = false;
-        if (currentMode === 'obstacles') {
-            isOnObstacle = obstacles.some(o => o.x === newFood.x && o.y === newFood.y);
+        
+        for (let t of tilesToCheck) {
+            if (snake.some(p => p.x === t.x && p.y === t.y)) isOnSnake = true;
+            if (currentMode === 'obstacles' && obstacles.some(o => o.x === t.x && o.y === t.y)) isOnObstacle = true;
         }
 
-        if (!isOnSnake && !isOnObstacle) return newFood;
+        let isOnFood = food && tilesToCheck.some(t => t.x === food.x && t.y === food.y);
+        let isOnBonus = bonusFood && tilesToCheck.some(t => 
+            t.x >= bonusFood.x && t.x <= bonusFood.x + 1 && 
+            t.y >= bonusFood.y && t.y <= bonusFood.y + 1
+        );
+
+        if (!isOnSnake && !isOnObstacle && !isOnFood && (!isOnBonus || isBonus)) return newFood;
     }
 }
 
 function handleGameOver() {
     isGameOver = true;
-    finalScoreElement.textContent = score;
     gameOverScreen.style.display = 'flex';
 }
 
 function handleInput(newDx, newDy) {
     if (!isGameStarted && !isGameOver) {
         initGame();
+        // Prevent moving backwards at start
+        if (newDx !== 0 && lastDx === -newDx) return;
+        if (newDy !== 0 && lastDy === -newDy) return;
         dx = newDx;
         dy = newDy;
         return;
@@ -240,43 +312,36 @@ function handleInput(newDx, newDy) {
 
     if (isGameOver) return;
 
-    if (newDx !== 0 && dx === -newDx) return;
-    if (newDy !== 0 && dy === -newDy) return;
+    if (newDx !== 0 && lastDx === -newDx) return;
+    if (newDy !== 0 && lastDy === -newDy) return;
 
     dx = newDx;
     dy = newDy;
 }
 
-// Keyboard Controls
+// Keyboard
 document.addEventListener('keydown', e => {
-    // If not started, prevent default scrolling with arrows to allow starting cleanly
     if (!isGameStarted && (e.key.startsWith('Arrow') || ['w','a','s','d',' '].includes(e.key.toLowerCase()))) {
         e.preventDefault();
-        
-        // Determine default starting direction if space/enter is pressed instead of an arrow
-        if(e.key === ' ' || e.key === 'Enter') {
-            initGame();
-        } else {
-            // Let the switch statement handle it
-        }
+        if(e.key === ' ' || e.key === 'Enter') initGame();
     }
 
     switch (e.key) {
-        case 'ArrowUp': case 'w': case 'W':
+        case 'ArrowUp': case 'w': case 'W': case '2':
             handleInput(0, -1); break;
-        case 'ArrowDown': case 's': case 'S':
+        case 'ArrowDown': case 's': case 'S': case '8':
             handleInput(0, 1); break;
-        case 'ArrowLeft': case 'a': case 'A':
+        case 'ArrowLeft': case 'a': case 'A': case '4':
             handleInput(-1, 0); break;
-        case 'ArrowRight': case 'd': case 'D':
+        case 'ArrowRight': case 'd': case 'D': case '6':
             handleInput(1, 0); break;
     }
 });
 
-// Touch / Mouse Controls
+// Touch / Mouse on D-Pad
 const setupBtn = (id, newDx, newDy) => {
     const btn = document.getElementById(id);
-    
+    if (!btn) return;
     btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         handleInput(newDx, newDy);
@@ -293,9 +358,29 @@ setupBtn('btn-down', 0, 1);
 setupBtn('btn-left', -1, 0);
 setupBtn('btn-right', 1, 0);
 
+// Numpad support for movement (2, 4, 6, 8)
+const numpadBtns = document.querySelectorAll('.num-btn');
+numpadBtns.forEach(btn => {
+    btn.addEventListener('mousedown', (e) => {
+        const text = e.currentTarget.childNodes[0].textContent.trim();
+        if (text === '2') handleInput(0, -1);
+        if (text === '8') handleInput(0, 1);
+        if (text === '4') handleInput(-1, 0);
+        if (text === '6') handleInput(1, 0);
+    });
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const text = e.currentTarget.childNodes[0].textContent.trim();
+        if (text === '2') handleInput(0, -1);
+        if (text === '8') handleInput(0, 1);
+        if (text === '4') handleInput(-1, 0);
+        if (text === '6') handleInput(1, 0);
+    }, { passive: false });
+});
+
 restartBtn.addEventListener('click', () => {
     initGame();
 });
 
-// Draw initial state before starting
+// Initial draw
 ctx.clearRect(0, 0, canvas.width, canvas.height);
