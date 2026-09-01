@@ -196,14 +196,11 @@ function draw() {
         ctx.fillRect(part.x * gridSize + padding, part.y * gridSize + padding, gridSize - padding * 2, gridSize - padding * 2);
     });
 
-    // Draw food (different shape, maybe a bug/dot)
+    // Draw food (classic egg/dot)
     const px = food.x * gridSize;
     const py = food.y * gridSize;
-    ctx.fillRect(px + 3, py + 3, gridSize - 6, gridSize - 6);
-    ctx.fillRect(px + 5, py + 1, gridSize - 10, 2);
-    ctx.fillRect(px + 5, py + gridSize - 3, gridSize - 10, 2);
-    ctx.fillRect(px + 1, py + 5, 2, gridSize - 10);
-    ctx.fillRect(px + gridSize - 3, py + 5, 2, gridSize - 10);
+    const padding = 2;
+    ctx.fillRect(px + padding, py + padding, gridSize - padding * 2, gridSize - padding * 2);
 }
 
 function getRandomFoodPosition() {
