@@ -1,0 +1,157 @@
+.main-menu-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.global-stats {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.stat-item .star.filled {
+  color: var(--star-filled);
+}
+
+.stat-divider {
+  width: 2px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.settings-btn {
+  padding: 0.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.menu-header .title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  letter-spacing: -1px;
+}
+
+.menu-header .subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.difficulty-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.diff-card {
+  padding: 2rem;
+  text-align: left;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.diff-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.diff-card:hover {
+  transform: translateX(10px);
+}
+
+.diff-card:hover::before {
+  opacity: 1;
+}
+
+.diff-card.easy:hover { border-color: var(--success); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+.diff-card.medium:hover { border-color: var(--star-filled); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
+.diff-card.hard:hover { border-color: var(--error); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+
+.diff-card h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.diff-card.easy h2 { color: var(--success); }
+.diff-card.medium h2 { color: var(--star-filled); }
+.diff-card.hard h2 { color: var(--error); }
+
+.diff-card p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Modal specific */
+.settings-modal h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-section {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.settings-section h3 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.theme-btn {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.theme-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}

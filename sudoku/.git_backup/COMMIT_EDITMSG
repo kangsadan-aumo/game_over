@@ -1,0 +1,47 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is up to date with 'origin/main'.
+#
+# Changes to be committed:
+#	renamed:    public/favicon.svg -> assets/favicon.svg
+#	renamed:    src/assets/hero.png -> assets/hero.png
+#	renamed:    public/icons.svg -> assets/icons.svg
+#	renamed:    public/pwa-192x192.png -> assets/pwa-192x192.png
+#	renamed:    public/pwa-512x512.png -> assets/pwa-512x512.png
+#	renamed:    src/assets/react.svg -> assets/react.svg
+#	renamed:    src/assets/vite.svg -> assets/vite.svg
+#	new file:   css/components.css
+#	renamed:    src/components/GameScreen.css -> css/game-screen.css
+#	renamed:    src/index.css -> css/global.css
+#	new file:   css/level-selector.css
+#	new file:   css/main-menu.css
+#	modified:   index.html
+#	new file:   js/app.js
+#	renamed:    src/utils/sounds.ts -> js/sounds.js
+#	new file:   js/store.js
+#	new file:   js/sudoku.js
+#	new file:   js/ui.js
+#	deleted:    package-lock.json
+#	deleted:    package.json
+#	deleted:    src/App.css
+#	deleted:    src/App.tsx
+#	deleted:    src/components/GameScreen.tsx
+#	deleted:    src/components/LevelSelector.css
+#	deleted:    src/components/LevelSelector.tsx
+#	deleted:    src/components/MainMenu.css
+#	deleted:    src/components/MainMenu.tsx
+#	deleted:    src/components/SettingsModal.css
+#	deleted:    src/components/SettingsModal.tsx
+#	deleted:    src/components/VictoryModal.css
+#	deleted:    src/components/VictoryModal.tsx
+#	deleted:    src/main.tsx
+#	deleted:    src/store/gameStore.ts
+#	deleted:    src/utils/sudoku.ts
+#	deleted:    tsconfig.app.json
+#	deleted:    tsconfig.json
+#	deleted:    tsconfig.node.json
+#	deleted:    vite.config.ts
+#

@@ -1,0 +1,175 @@
+:root {
+  --bg-dark: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-card-hover: rgba(51, 65, 85, 0.8);
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --success: #10b981;
+  --error: #ef4444;
+  --star-filled: #fbbf24;
+  --star-empty: #334155;
+  --grid-line: #334155;
+  --grid-line-thick: #64748b;
+  --cell-bg: rgba(15, 23, 42, 0.4);
+  --cell-bg-selected: rgba(139, 92, 246, 0.3);
+  --cell-bg-highlight: rgba(139, 92, 246, 0.15);
+  --cell-text-fixed: #f8fafc;
+  --cell-text-input: #a78bfa;
+  --cell-text-error: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+}
+
+.text-primary { color: var(--primary); }
+.text-error { color: var(--error); }
+.text-muted { color: var(--text-muted); }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Themes */
+body.theme-matcha {
+  --bg-dark: #f0fdf4;
+  --bg-card: rgba(220, 252, 231, 0.7);
+  --bg-card-hover: rgba(187, 247, 208, 0.8);
+  --primary: #16a34a;
+  --primary-hover: #15803d;
+  --text-main: #14532d;
+  --text-muted: #166534;
+  --grid-line: #bbf7d0;
+  --cell-bg-selected: rgba(22, 163, 74, 0.3);
+  --cell-bg-highlight: rgba(22, 163, 74, 0.15);
+  --cell-text-fixed: #14532d;
+  --cell-text-input: #15803d;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(140, 60%, 90%, 1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(145, 50%, 85%, 1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(150, 40%, 80%, 1) 0, transparent 50%);
+}
+
+body.theme-matcha .glass {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+body.theme-matcha .glass-button {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+}
+
+body.theme-matcha .glass-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-sunset {
+  --bg-dark: #fff7ed;
+  --bg-card: rgba(255, 237, 213, 0.7);
+  --bg-card-hover: rgba(254, 215, 170, 0.8);
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --text-main: #431407;
+  --text-muted: #9a3412;
+  --grid-line: #fed7aa;
+  --cell-bg-selected: rgba(234, 88, 12, 0.3);
+  --cell-bg-highlight: rgba(234, 88, 12, 0.15);
+  --cell-text-fixed: #431407;
+  --cell-text-input: #c2410c;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(20, 100%, 90%, 1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(25, 90%, 85%, 1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(15, 80%, 80%, 1) 0, transparent 50%);
+}
+
+body.theme-sunset .glass {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+body.theme-sunset .glass-button {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+}
+
+body.theme-sunset .glass-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.theme-ice {
+  --bg-dark: #f0f9ff;
+  --bg-card: rgba(224, 242, 254, 0.7);
+  --bg-card-hover: rgba(186, 230, 253, 0.8);
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --text-main: #082f49;
+  --text-muted: #075985;
+  --grid-line: #bae6fd;
+  --cell-bg-selected: rgba(2, 132, 199, 0.3);
+  --cell-bg-highlight: rgba(2, 132, 199, 0.15);
+  --cell-text-fixed: #082f49;
+  --cell-text-input: #0369a1;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(200, 100%, 90%, 1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(205, 90%, 85%, 1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(195, 80%, 80%, 1) 0, transparent 50%);
+}
+
+body.theme-ice .glass {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+body.theme-ice .glass-button {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+}
+
+body.theme-ice .glass-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
