@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Snake II</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="phone-frame">
+            <div class="phone-speaker"></div>
+            <div class="phone-brand">NOKIA</div>
+            <div class="screen-container">
+                <div class="header" id="gameHeader">
+                    <div class="score-board">Score: <span id="score">0</span></div>
+                    <div class="high-score-board">Best: <span id="high-score">0</span></div>
+                </div>
+                <canvas id="gameCanvas" width="260" height="260"></canvas>
+                
+                <div class="game-over" id="gameOverScreen">
+                    <h2>GAME OVER</h2>
+                    <p>Score: <span id="final-score">0</span></p>
+                    <button id="restartBtn">RETRY</button>
+                </div>
+                <div class="start-screen" id="startScreen">
+                    <h2 class="title">SNAKE II</h2>
+                    <div class="mode-select">
+                        <label class="mode-label">
+                            <input type="radio" name="gameMode" value="box" checked>
+                            <span class="radio-custom"></span> Box (Walls)
+                        </label>
+                        <label class="mode-label">
+                            <input type="radio" name="gameMode" value="wrap">
+                            <span class="radio-custom"></span> No Borders
+                        </label>
+                        <label class="mode-label">
+                            <input type="radio" name="gameMode" value="obstacles">
+                            <span class="radio-custom"></span> Obstacles
+                        </label>
+                    </div>
+                    <p class="blink">Press arrow to start</p>
+                </div>
+            </div>
+            
+            <div class="controls-area">
+                <div class="phone-buttons">
+                    <div class="action-btn-left"></div>
+                    <div class="action-btn-right"></div>
+                </div>
+                <div class="d-pad">
+                    <button class="dir-btn up" id="btn-up">▲</button>
+                    <div class="d-pad-middle">
+                        <button class="dir-btn left" id="btn-left">◀</button>
+                        <div class="center-pad"></div>
+                        <button class="dir-btn right" id="btn-right">▶</button>
+                    </div>
+                    <button class="dir-btn down" id="btn-down">▼</button>
+                </div>
+                <div class="numpad">
+                    <!-- Decorative numpad dots -->
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

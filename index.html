@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub - ศูนย์รวมเกม</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <main class="container">
+        <header>
+            <h1>My Game Hub</h1>
+            <p>Welcome to the ultimate collection of games. Click to play!</p>
+        </header>
+
+        <div class="game-grid">
+            <!-- Game Card: 2048 -->
+            <a href="2048/index.html" class="game-card">
+                <div class="card-image">
+                    <img src="assets/cover_2048.jpg" alt="2048 Game Cover">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2>2048</h2>
+                    <p>Slide, merge, win. The classic numbers puzzle game.</p>
+                </div>
+            </a>
+
+            <!-- Game Card: Sudoku -->
+            <a href="sudoku/index.html" class="game-card">
+                <div class="card-image">
+                    <img src="assets/cover_sudoku.jpg" alt="Sudoku Game Cover">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2>Sudoku</h2>
+                    <p>Challenge your logic with the ultimate number placement puzzle.</p>
+                </div>
+            </a>
+
+            <!-- Game Card: Snake II -->
+            <a href="snack/index.html" class="game-card">
+                <div class="card-image">
+                    <img src="assets/cover_snake.jpg" alt="Snake II Game Cover">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2>Snake II</h2>
+                    <p>The legendary Nokia classic. Eat, grow, and avoid obstacles.</p>
+                </div>
+            </a>
+
+            <!-- Future Games Placeholder Example -->
+            <!-- <a href="#" class="game-card disabled">
+                <div class="card-image placeholder">
+                    <span class="coming-soon">Coming Soon</span>
+                </div>
+                <div class="card-content">
+                    <h2>Mystery Game</h2>
+                    <p>A new adventure is being forged.</p>
+                </div>
+            </a> -->
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
