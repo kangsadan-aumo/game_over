@@ -228,6 +228,46 @@ class GameApp {
 
         this.renderGameScreen();
 
+        // Check for completed row/col/box and animate
+        const isRowComplete = this.game.board[r].every(cell => cell.value !== 0);
+        const isColComplete = this.game.board.every(row => row[c].value !== 0);
+        let isBoxComplete = true;
+        for (let i = startR; i < startR + 3; i++) {
+          for (let j = startC; j < startC + 3; j++) {
+            if (this.game.board[i][j].value === 0) isBoxComplete = false;
+          }
+        }
+
+        const animateCells = [];
+        if (isRowComplete) {
+          for (let i = 0; i < 9; i++) animateCells.push({r, c: i});
+        }
+        if (isColComplete) {
+          for (let i = 0; i < 9; i++) animateCells.push({r: i, c});
+        }
+        if (isBoxComplete) {
+          for (let i = startR; i < startR + 3; i++) {
+            for (let j = startC; j < startC + 3; j++) {
+              animateCells.push({r: i, c: j});
+            }
+          }
+        }
+
+        if (animateCells.length > 0) {
+          const div = document.querySelector('.game-screen');
+          if (div) {
+            animateCells.forEach(cellPos => {
+              const cellEl = div.querySelector(`.cell[data-r="${cellPos.r}"][data-c="${cellPos.c}"]`);
+              if (cellEl) {
+                cellEl.classList.remove('completed-group');
+                void cellEl.offsetWidth; // Force reflow
+                cellEl.classList.add('completed-group');
+              }
+            });
+            window.sounds.playGroupComplete();
+          }
+        }
+
         if (window.sudokuAPI.isBoardFull(this.game.board)) {
           this.isWon = true;
           window.sounds.playWin();
@@ -312,8 +352,13 @@ class GameApp {
   }
 
   renderGameScreen() {
-    window.ui.clear();
-    const div = window.ui.createEl('div', 'game-screen animate-fade-in');
+    let div = document.querySelector('.game-screen');
+    const isNew = !div;
+    
+    if (isNew) {
+      window.ui.clear();
+      div = window.ui.createEl('div', 'game-screen animate-fade-in');
+    }
 
     let boardHtml = '';
     for (let r = 0; r < 9; r++) {
@@ -430,7 +475,9 @@ class GameApp {
       </div>
     `;
 
-    window.ui.container.appendChild(div);
+    if (isNew) {
+      window.ui.container.appendChild(div);
+    }
 
     // Attach events
     div.querySelector('#btn-game-back').addEventListener('click', () => this.handleBackFromGame());

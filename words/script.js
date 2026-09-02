@@ -308,11 +308,7 @@ const app = {
         
         document.getElementById('word-progress').textContent = `${this.state.wordIndex + 1}/20`;
         document.getElementById('translation-text').textContent = wordObj.trans;
-        if (this.state.mode === 1) {
-            document.getElementById('translation-box').classList.remove('hidden');
-        } else {
-            document.getElementById('translation-box').classList.add('hidden');
-        }
+        document.getElementById('translation-box').classList.remove('hidden');
         document.getElementById('btn-next').classList.add('hidden');
         
         this.state.currentInput = Array(wordStr.length).fill('');

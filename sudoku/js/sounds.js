@@ -55,6 +55,11 @@ class SoundEngine {
     this.playTone(150, 'sawtooth', 0.3, 0.05);
   }
 
+  playGroupComplete() {
+    this.playTone(659.25, 'sine', 0.1, 0.05);
+    setTimeout(() => this.playTone(880, 'sine', 0.2, 0.05), 100);
+  }
+
   playWin() {
     if (this.isMuted) return;
     try {
