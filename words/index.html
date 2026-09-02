@@ -41,6 +41,16 @@
             </div>
         </section>
 
+        <!-- Stage Selection -->
+        <section id="stage-select" class="screen">
+            <button class="btn-back" onclick="app.showLevelSelect()"><i class="fas fa-arrow-left"></i></button>
+            <h2>Select Stage</h2>
+            <p class="selected-level-display">Level: <span id="stage-level-display">A1</span></p>
+            <div class="stage-grid" id="stage-grid">
+                <!-- Stages will be injected here via JS -->
+            </div>
+        </section>
+
         <!-- Mode Selection -->
         <section id="mode-select" class="screen">
             <button class="btn-back" onclick="app.showLevelSelect()"><i class="fas fa-arrow-left"></i></button>
@@ -136,7 +146,7 @@
                 </div>
                 
                 <div class="result-buttons">
-                    <button class="btn btn-secondary" onclick="app.showLevelSelect()">Levels</button>
+                    <button class="btn btn-secondary" onclick="app.showStageSelect()">Stages</button>
                     <button class="btn btn-primary" onclick="app.replayGame()">Play Again</button>
                 </div>
             </div>

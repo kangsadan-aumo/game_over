@@ -64,6 +64,7 @@ vocabDB.B2[5] = { word: "FREQUENT", trans: "บ่อยครั้ง" };
 const app = {
     state: {
         level: 'A1',
+        stage: 1,
         mode: 1, // 1 = Anagram, 2 = Image Guess
         currentWords: [],
         wordIndex: 0,
@@ -73,6 +74,8 @@ const app = {
         stars: parseInt(localStorage.getItem('vocabStars')) || 0,
         combo: 0,
         unlockedLevels: JSON.parse(localStorage.getItem('vocabUnlockedLevels')) || ['A1'],
+        unlockedStages: JSON.parse(localStorage.getItem('vocabUnlockedStages')) || { 'A1': 1, 'A2': 1, 'B1': 1, 'B2': 1, 'C1': 1, 'C2': 1 },
+        stageStars: JSON.parse(localStorage.getItem('vocabStageStars')) || {},
         highScores: JSON.parse(localStorage.getItem('vocabHighScores')) || {},
         settings: JSON.parse(localStorage.getItem('vocabSettings')) || { soundOn: true },
         missedWords: [],
@@ -130,11 +133,12 @@ const app = {
             const lvl = levels[index];
             if (this.state.unlockedLevels.includes(lvl)) {
                 btn.classList.remove('locked');
-                let scoreText = this.state.highScores[lvl] ? `High Score: ${this.state.highScores[lvl].score}` : 'No Score Yet';
+                const unlocked = this.state.unlockedStages[lvl] || 1;
+                let text = `Stage: ${Math.min(unlocked, 20)}/20`;
                 if (!btn.querySelector('.high-score-display')) {
-                    btn.innerHTML += `<div class="high-score-display">${scoreText}</div>`;
+                    btn.innerHTML += `<div class="high-score-display">${text}</div>`;
                 } else {
-                    btn.querySelector('.high-score-display').textContent = scoreText;
+                    btn.querySelector('.high-score-display').textContent = text;
                 }
             } else {
                 btn.classList.add('locked');
@@ -156,7 +160,46 @@ const app = {
             return;
         }
         this.state.level = level;
-        document.getElementById('mode-level-display').textContent = level;
+        document.getElementById('stage-level-display').textContent = level;
+        this.showStageSelect();
+    },
+
+    showStageSelect() {
+        const grid = document.getElementById('stage-grid');
+        grid.innerHTML = '';
+        
+        const unlockedStage = this.state.unlockedStages[this.state.level] || 1;
+        
+        for (let i = 1; i <= 20; i++) {
+            const btn = document.createElement('button');
+            const isUnlocked = i <= unlockedStage;
+            btn.className = `btn-stage ${isUnlocked ? '' : 'locked'}`;
+            
+            const stageId = `${this.state.level}-${i}`;
+            const stars = this.state.stageStars[stageId] || 0;
+            
+            let starsHtml = '<div class="stage-stars">';
+            for(let s=1; s<=3; s++) {
+                starsHtml += `<i class="${s <= stars ? 'fas' : 'far'} fa-star"></i>`;
+            }
+            starsHtml += '</div>';
+            
+            if (isUnlocked) {
+                btn.onclick = () => this.selectStage(i);
+                btn.innerHTML = `<span>${i}</span>${starsHtml}`;
+            } else {
+                btn.innerHTML = `<i class="fas fa-lock"></i><span>${i}</span>`;
+            }
+            
+            grid.appendChild(btn);
+        }
+        
+        this.showScreen('stage-select');
+    },
+
+    selectStage(stage) {
+        this.state.stage = stage;
+        document.getElementById('mode-level-display').textContent = `${this.state.level} - Stage ${stage}`;
         this.showScreen('mode-select');
     },
 
@@ -256,7 +299,7 @@ const app = {
 
     quitGame() {
         clearInterval(this.state.timerInterval);
-        this.showLevelSelect();
+        this.showStageSelect();
     },
 
     loadWord() {
@@ -548,7 +591,6 @@ const app = {
         this.updateComboDisplay();
         
         // Show correct answer briefly then move to next
-        const targetWord = this.state.currentWords[this.state.wordIndex].word;
         const slots = document.querySelectorAll('.slot');
         slots.forEach((slot, i) => {
             slot.textContent = targetWord[i];
@@ -584,8 +626,15 @@ const app = {
         if (this.state.score > 150 && this.state.time < 180) starsEarned = 3;
         else if (this.state.score > 100) starsEarned = 2;
         
-        this.state.stars += starsEarned;
-        localStorage.setItem('vocabStars', this.state.stars);
+        const stageId = `${this.state.level}-${this.state.stage}`;
+        const previousStars = this.state.stageStars[stageId] || 0;
+        
+        if (starsEarned > previousStars) {
+            this.state.stars += (starsEarned - previousStars);
+            this.state.stageStars[stageId] = starsEarned;
+            localStorage.setItem('vocabStageStars', JSON.stringify(this.state.stageStars));
+            localStorage.setItem('vocabStars', this.state.stars);
+        }
         
         document.getElementById('final-score').textContent = this.state.score;
         const mins = Math.floor(this.state.time / 60).toString().padStart(2, '0');
@@ -597,20 +646,29 @@ const app = {
             icon.className = index < starsEarned ? 'fas fa-star' : 'far fa-star';
         });
         
-        // Unlock next level if stars earned > 0
+        // Unlock next stage or level
         if (starsEarned > 0) {
-            const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-            const currentIndex = levels.indexOf(this.state.level);
-            if (currentIndex < levels.length - 1) {
-                const nextLevel = levels[currentIndex + 1];
-                if (!this.state.unlockedLevels.includes(nextLevel)) {
-                    this.state.unlockedLevels.push(nextLevel);
-                    localStorage.setItem('vocabUnlockedLevels', JSON.stringify(this.state.unlockedLevels));
+            if (this.state.stage < 20) {
+                const nextStage = this.state.stage + 1;
+                if (!this.state.unlockedStages[this.state.level] || this.state.unlockedStages[this.state.level] < nextStage) {
+                    this.state.unlockedStages[this.state.level] = nextStage;
+                    localStorage.setItem('vocabUnlockedStages', JSON.stringify(this.state.unlockedStages));
+                }
+            } else {
+                const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+                const currentIndex = levels.indexOf(this.state.level);
+                if (currentIndex < levels.length - 1) {
+                    const nextLevel = levels[currentIndex + 1];
+                    if (!this.state.unlockedLevels.includes(nextLevel)) {
+                        this.state.unlockedLevels.push(nextLevel);
+                        localStorage.setItem('vocabUnlockedLevels', JSON.stringify(this.state.unlockedLevels));
+                    }
                 }
             }
         }
+        
         // High Scores
-        const currentLvl = this.state.level;
+        const currentLvl = stageId;
         if (!this.state.highScores[currentLvl] || this.state.score > this.state.highScores[currentLvl].score) {
             this.state.highScores[currentLvl] = { score: this.state.score, time: this.state.time };
             localStorage.setItem('vocabHighScores', JSON.stringify(this.state.highScores));
